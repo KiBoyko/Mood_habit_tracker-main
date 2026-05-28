@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дневник настроения и привычек</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка -->
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <h1>Дневник настроения и привычек</h1>
+                </div>
+                <div class="user-controls">
+                    <div class="auth-section" id="authSection">
+                        <button id="loginBtn" class="btn btn-outline">
+                            <i class="fas fa-sign-in-alt"></i> Войти
+                        </button>
+                        <button id="registerBtn" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Регистрация
+                        </button>
+                    </div>
+                    <div class="user-section" id="userSection" style="display: none;">
+                        <div class="user-info">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="usernameDisplay">Гость</span>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-outline">
+                            <i class="fas fa-sign-out-alt"></i> Выйти
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main>
+            <!-- Панель быстрого доступа -->
+            <div class="quick-actions" id="quickActions" style="display: none;">
+                <div class="action-card">
+                    <i class="fas fa-plus-circle"></i>
+                    <h3>Быстрая запись</h3>
+                    <p>Отметьте текущее настроение</p>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-tasks"></i>
+                    <h3>Привычки</h3>
+                    <p>Управление ежедневными задачами</p>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Аналитика</h3>
+                    <p>Просмотр статистики</p>
+                </div>
+            </div>
+
+            <!-- Основная панель -->
+            <div class="main-panel">
+                <!-- Левая колонка -->
+                <div class="left-column">
+                    <!-- Карточка настроения -->
+                    <div class="card mood-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-smile"></i> Отметить настроение</h3>
+                            <span class="current-date" id="currentDate"></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mood-selector">
+                                <h4>Как вы себя чувствуете?</h4>
+                                <div id="moodButtons" class="mood-buttons">
+                                    <!-- Кнопки настроений будут добавлены через JS -->
+                                </div>
+                            </div>
+                            <div class="note-section">
+                                <h4>Заметка к дню (необязательно)</h4>
+                                <textarea id="moodNote" placeholder="Опишите ваш день, мысли или события..." rows="3"></textarea>
+                            </div>
+                            <button id="saveEntryBtn" class="btn btn-primary btn-large" disabled>
+                                <i class="fas fa-save"></i> Сохранить запись
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Карточка привычек -->
+                    <div class="card habits-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-tasks"></i> Мои привычки сегодня</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="habitsList" class="habits-list">
+                                <div class="no-habits">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    <p>Войдите, чтобы управлять привычками</p>
+                                </div>
+                            </div>
+                            <div class="add-habit-form">
+                                <input type="text" id="newHabitName" placeholder="Название новой привычки" disabled>
+                                <button id="addHabitBtn" class="btn btn-success" disabled>
+                                    <i class="fas fa-plus"></i> Добавить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Правая колонка -->
+                <div class="right-column">
+                    <!-- Карточка статистики -->
+                    <div class="card stats-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-line"></i> Статистика</h3>
+                            <div class="period-selector">
+                                <select id="periodSelect">
+                                    <option value="week">За неделю</option>
+                                    <option value="month" selected>За месяц</option>
+                                    <option value="year">За год</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="statsContent">
+                                <div class="no-data">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <p>Войдите, чтобы увидеть статистику</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Карточка аналитики -->
+                    <div class="card analytics-card" id="analyticsSection" style="display: none;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-bar"></i> Аналитика данных</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="chartsContainer" class="charts-container">
+                                <!-- Графики будут добавлены через JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- История записей -->
+            <div class="history-section">
+                <div class="card history-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> История записей</h3>
+                        <div class="filter-controls">
+                            <div class="filter-group">
+                                <label for="dateFilter"><i class="far fa-calendar"></i> Дата:</label>
+                                <input type="date" id="dateFilter">
+                            </div>
+                            <div class="filter-group">
+                                <label for="moodFilter"><i class="far fa-smile"></i> Настроение:</label>
+                                <select id="moodFilter">
+                                    <option value="">Все</option>
+                                </select>
+                            </div>
+                            <div class="filter-buttons">
+                                <button id="applyFilterBtn" class="btn btn-outline">
+                                    <i class="fas fa-filter"></i> Применить
+                                </button>
+                                <button id="resetFilterBtn" class="btn btn-outline">
+                                    <i class="fas fa-redo"></i> Сбросить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="entriesList" class="entries-list">
+                            <div class="no-data">
+                                <i class="fas fa-book-open"></i>
+                                <p>Войдите, чтобы увидеть историю записей</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Подвал -->
+        <footer>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p><i class="fas fa-graduation-cap"></i> Проект</p>
+                    <p>РХТУ Д.И.Менделеева, Бойко Кирилл, 2026</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#"><i class="fas fa-question-circle"></i> Помощь</a>
+                    <a href="#"><i class="fas fa-info-circle"></i> О проекте</a>
+                    <a href="#"><i class="fas fa-envelope"></i> Контакты</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Модальные окна -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-sign-in-alt"></i> Вход в систему</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="loginUsername"><i class="fas fa-user"></i> Имя пользователя</label>
+                    <input type="text" id="loginUsername" placeholder="Введите имя пользователя">
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword"><i class="fas fa-lock"></i> Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="Введите пароль">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="submitLoginBtn" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Войти
+                </button>
+                <p class="modal-link">Нет аккаунта? <a href="#" id="switchToRegister">Зарегистрироваться</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Регистрация</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="registerUsername"><i class="fas fa-user"></i> Имя пользователя</label>
+                    <input type="text" id="registerUsername" placeholder="Придумайте имя пользователя">
+                </div>
+                <div class="input-group">
+                    <label for="registerEmail"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="registerEmail" placeholder="Введите email">
+                </div>
+                <div class="input-group">
+                    <label for="registerPassword"><i class="fas fa-lock"></i> Пароль</label>
+                    <input type="password" id="registerPassword" placeholder="Придумайте пароль (мин. 6 символов)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="submitRegisterBtn" class="btn btn-primary btn-block">
+                    <i class="fas fa-user-plus"></i> Зарегистрироваться
+                </button>
+                <p class="modal-link">Уже есть аккаунт? <a href="#" id="switchToLogin">Войти</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

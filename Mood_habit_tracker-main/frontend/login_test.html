@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Тест авторизации</title>
+</head>
+<body>
+    <h2>Тест авторизации API</h2>
+    <input type="text" id="username" placeholder="Логин" value="admin"><br>
+    <input type="password" id="password" placeholder="Пароль"><br>
+    <button onclick="login()">Войти</button>
+    
+    <div id="result"></div>
+    
+    <script>
+    async function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        try {
+            const response = await fetch('http://localhost:8000/api-token-auth/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            });
+            
+            const data = await response.json();
+            document.getElementById('result').innerHTML = 
+                `<h3>Успешно!</h3>
+                 <p>Токен: ${data.token.substring(0, 20)}...</p>
+                 <p>Сохраните этот токен и добавьте в localStorage:</p>
+                 <code>localStorage.setItem('token', '${data.token}')</code>
+                 <p>Затем обновите главную страницу.</p>`;
+        } catch (error) {
+            document.getElementById('result').innerHTML = 
+                `<h3>Ошибка!</h3><p>${error.message}</p>`;
+        }
+    }
+    </script>
+</body>
+</html>
